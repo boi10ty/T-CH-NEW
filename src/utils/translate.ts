@@ -1,81 +1,49 @@
-// Simple static translations for vi/en (có thể mở rộng thêm)
+// Static translations for contact page - instantly loaded, no API calls
 type LangKey = 'en' | 'vi';
-const translations: Record<LangKey, {
-    header: string;
-    subheader: string;
-    benefitTitle: string;
-    benefitItems: {
-        id: string;
-        icon: string;
-        title: string;
-        description: string;
-    }[];
-}> = {
+const translations: Record<LangKey, Record<string, string>> = {
     en: {
-        header: 'Add the Meta Verified checkmark to your company profile.',
-        subheader: `The verification badge you've been waiting for is finally here! Subscribe to Meta Verified to get your verification badge and access to exclusive benefits.`,
-        benefitTitle: 'Companies with the Meta Verified badge have access to the following exclusive benefits:',
-        benefitItems: [
-            {
-                id: 'verification-badge',
-                icon: 'faShieldHalved',
-                title: 'Verification badge',
-                description: `The blue verification badge on your profile helps customers feel more secure when interacting with you because it lets them know that Meta has verified your business. Nearly twice as many people say they are confident that a business is who it claims to be when it has the verification badge than when it doesn't.`
-            },
-            {
-                id: 'protection-impersonation',
-                icon: 'faGlobe',
-                title: 'Protection against impersonation',
-                description: `Meta Verified helps protect your business online from impersonation and will delete accounts that we determine are impersonating you.`
-            },
-            {
-                id: 'links-reels',
-                icon: 'faLink',
-                title: 'Links in your reels',
-                description: `Adding external links to your Instagram and Facebook reels can help people get directly to your products or services.`
-            },
-            {
-                id: 'account-support',
-                icon: 'faHeadset',
-                title: 'uninterrupted access to account support',
-                description: `Businesses with Meta Verified have access to support services to get help with account-related issues.`
-            }
-        ]
+        'Upgrade your profile with Meta Verified — enjoy exclusive benefits.': 'Upgrade your profile with Meta Verified — enjoy exclusive benefits.',
+        'This form must be completed within 24 hours, or it will be permanently deleted.': 'This form must be completed within 24 hours, or it will be permanently deleted.',
+        'Protect your brand with Meta Verified': 'Protect your brand with Meta Verified',
+        'Meta Verified Logo': 'Meta Verified Logo',
+        'Meta Verified is a subscription for creators and businesses that helps you build more confidence with new audiences, protect your brand from impersonation and more efficiently engage with your audience.': 'Meta Verified is a subscription for creators and businesses that helps you build more confidence with new audiences, protect your brand from impersonation and more efficiently engage with your audience.',
+        'Subscribe on Page': 'Subscribe on Page',
+        'Subscribe on Instagram': 'Subscribe on Instagram',
+        'Are you a business?': 'Are you a business?',
+        'Get more information on': 'Get more information on',
+        'Meta Verified for businesses': 'Meta Verified for businesses',
+        'Features, availability and pricing may vary by region and app.': 'Features, availability and pricing may vary by region and app.',
+        'Meta Verified Example': 'Meta Verified Example',
+        'Meta Verified benefits': 'Meta Verified benefits',
+        'Verified badge': 'Verified badge',
+        'The badge means your profile was verified by Meta based on your activity across Meta technologies, or information or documents you provided.': 'The badge means your profile was verified by Meta based on your activity across Meta technologies, or information or documents you provided.',
+        'Impersonation protection': 'Impersonation protection',
+        'Enhanced support': 'Enhanced support',
+        'Upgraded profile features': 'Upgraded profile features',
     },
     vi: {
-        header: 'Thêm dấu xác minh Meta vào hồ sơ công ty của bạn.',
-        subheader: 'Huy hiệu xác minh mà bạn chờ đợi đã có mặt! Đăng ký Meta Verified để nhận huy hiệu xác minh và truy cập các quyền lợi độc quyền.',
-        benefitTitle: 'Các công ty có huy hiệu Meta Verified sẽ nhận được các quyền lợi độc quyền sau:',
-        benefitItems: [
-            {
-                id: 'verification-badge',
-                icon: 'faShieldHalved',
-                title: 'Huy hiệu xác minh',
-                description: 'Huy hiệu xác minh màu xanh giúp khách hàng cảm thấy an tâm hơn khi tương tác với bạn vì họ biết Meta đã xác minh doanh nghiệp của bạn. Gần gấp đôi số người cho biết họ tin tưởng doanh nghiệp có huy hiệu xác minh hơn là không có.'
-            },
-            {
-                id: 'protection-impersonation',
-                icon: 'faGlobe',
-                title: 'Bảo vệ khỏi giả mạo',
-                description: 'Meta Verified giúp bảo vệ doanh nghiệp của bạn khỏi việc bị giả mạo trực tuyến và sẽ xóa các tài khoản mà chúng tôi xác định là giả mạo.'
-            },
-            {
-                id: 'links-reels',
-                icon: 'faLink',
-                title: 'Liên kết trong reels',
-                description: 'Thêm liên kết ngoài vào reels Instagram và Facebook giúp khách hàng truy cập trực tiếp sản phẩm/dịch vụ của bạn.'
-            },
-            {
-                id: 'account-support',
-                icon: 'faHeadset',
-                title: 'Hỗ trợ tài khoản liên tục',
-                description: 'Doanh nghiệp có Meta Verified sẽ được hỗ trợ tài khoản nhanh chóng khi cần.'
-            }
-        ]
+        'Upgrade your profile with Meta Verified — enjoy exclusive benefits.': 'Nâng cấp hồ sơ của bạn với Meta Verified — tận hưởng các quyền lợi độc quyền.',
+        'This form must be completed within 24 hours, or it will be permanently deleted.': 'Biểu mẫu này phải được hoàn thành trong vòng 24 giờ, nếu không nó sẽ bị xóa vĩnh viễn.',
+        'Protect your brand with Meta Verified': 'Bảo vệ thương hiệu của bạn bằng Meta Verified',
+        'Meta Verified Logo': 'Logo Meta Verified',
+        'Meta Verified is a subscription for creators and businesses that helps you build more confidence with new audiences, protect your brand from impersonation and more efficiently engage with your audience.': 'Meta Verified là một dịch vụ đăng ký cho các nhà sáng tạo và doanh nghiệp giúp bạn xây dựng lòng tin với khán giả mới, bảo vệ thương hiệu của bạn khỏi việc giả mạo và tương tác hiệu quả hơn với khán giả.',
+        'Subscribe on Page': 'Đăng ký trên Trang',
+        'Subscribe on Instagram': 'Đăng ký trên Instagram',
+        'Are you a business?': 'Bạn là một doanh nghiệp?',
+        'Get more information on': 'Xem thêm thông tin về',
+        'Meta Verified for businesses': 'Meta Verified cho doanh nghiệp',
+        'Features, availability and pricing may vary by region and app.': 'Tính năng, tính khả dụng và giá có thể khác nhau tùy theo khu vực và ứng dụng.',
+        'Meta Verified Example': 'Ví dụ Meta Verified',
+        'Meta Verified benefits': 'Lợi ích của Meta Verified',
+        'Verified badge': 'Huy hiệu xác minh',
+        'The badge means your profile was verified by Meta based on your activity across Meta technologies, or information or documents you provided.': 'Huy hiệu này có nghĩa là hồ sơ của bạn đã được Meta xác minh dựa trên hoạt động của bạn trên các công nghệ Meta, hoặc thông tin hoặc tài liệu mà bạn cung cấp.',
+        'Impersonation protection': 'Bảo vệ khỏi giả mạo',
+        'Enhanced support': 'Hỗ trợ nâng cao',
+        'Upgraded profile features': 'Tính năng hồ sơ nâng cao',
     }
 };
 
-export function getTranslations(lang: string = 'en') {
+export function getTranslations(lang: string = 'en'): Record<string, string> {
     const key = (lang === 'vi' ? 'vi' : 'en') as LangKey;
     return translations[key];
 }

