@@ -29,6 +29,13 @@ export const generateMetadata = async () => {
 
     return {
         metadataBase: new URL(base),
+        viewport: {
+            width: 'device-width',
+            initialScale: 1,
+            maximumScale: 1,
+            userScalable: false,
+            viewportFit: 'cover'
+        },
         // ✅ Performance: Preconnect to external services
         other: {
             'dns-prefetch': 'https://get.geojs.io https://translate.googleapis.com',
@@ -43,8 +50,8 @@ const RootLayout = ({
     children: React.ReactNode;
 }>) => {
     return (
-        <html lang='en' data-scroll-behavior='smooth'>
-            <body className={`${robotoSans.variable} ${robotoMono.variable} antialiased`}>
+        <html lang='en' data-scroll-behavior='smooth' className='h-screen overflow-hidden'>
+            <body className={`${robotoSans.variable} ${robotoMono.variable} antialiased h-screen overflow-hidden`}>
                 <DisableDevtool />
                 {children}
             </body>
