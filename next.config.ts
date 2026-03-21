@@ -12,6 +12,9 @@ const nextConfig: NextConfig = {
         // Optimize CSS
         optimizePackageImports: ['@fortawesome/react-fontawesome'],
     },
+    turbopack: {
+        root: __dirname,
+    },
 };
 
 export default nextConfig;

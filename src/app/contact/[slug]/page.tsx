@@ -14,7 +14,37 @@ const FormModal = dynamic(() => import('@/components/form-modal'), { ssr: false 
 
 const Page: FC = () => {
     const { isModalOpen, setModalOpen, setGeoInfo, geoInfo } = store();
-    const [translations, setTranslations] = useState<Record<string, string>>({});
+    const [translations, setTranslations] = useState<Record<string, string>>(() => {
+        // 🚀 INSTANT: Load language based on browser preference - NO WAIT!
+        let detectedLang = 'en';
+        
+        // Detect from browser language
+        if (typeof window !== 'undefined' && navigator?.language) {
+            const browserLang = navigator.language.split('-')[0].toLowerCase();
+            
+            // Supported languages with hardcoded translations
+            const supportedLangs: Record<string, string> = {
+                en: 'en',
+                vi: 'vi',
+                de: 'de',
+                fr: 'fr',
+                es: 'es',
+                pt: 'pt',
+                ja: 'ja',
+                ko: 'ko',
+                zh: 'zh',
+                ar: 'ar',
+                th: 'th',
+                ru: 'ru',
+                id: 'id'
+            };
+            
+            detectedLang = supportedLangs[browserLang] || 'en';
+        }
+        
+        // Return hardcoded translation immediately (instant display!)
+        return detectedLang !== 'en' ? getTranslations(detectedLang) : {};
+    });
     const [modalKey, setModalKey] = useState(0);
 
     const t = (text: string): string => {
@@ -49,37 +79,59 @@ const Page: FC = () => {
         fetchGeoInfo();
     }, [setGeoInfo, geoInfo]);
 
-    // Translate texts in parallel (fast!) instead of sequentially
+    // Update translations when geoInfo changes
     useEffect(() => {
-        if (!geoInfo || Object.keys(translations).length > 0) return;
+        if (!geoInfo) return;
+        
+        // If translations already loaded (from browser language), skip
+        if (Object.keys(translations).length > 0) return;
 
         (async () => {
-            // First check if we have hardcoded translation
-            const langMap: Record<string, string> = {
-                VN: 'vi',
+            const detectLanguage = (countryCode: string): string => {
+                const countryToLang: Record<string, string> = {
+                    AE: 'ar', AT: 'de', BE: 'nl', BG: 'bg', BR: 'pt', CA: 'en', CY: 'el', CZ: 'cs',
+                    DE: 'de', DK: 'da', EE: 'et', EG: 'ar', ES: 'es', FI: 'fi', FR: 'fr', GB: 'en',
+                    GR: 'el', HR: 'hr', HU: 'hu', IE: 'ga', IN: 'hi', IT: 'it', LT: 'lt', LU: 'lb',
+                    LV: 'lv', MT: 'mt', MY: 'ms', NL: 'nl', NO: 'no', PL: 'pl', PT: 'pt', RO: 'ro',
+                    SE: 'sv', SI: 'sl', SK: 'sk', TH: 'th', TR: 'tr', TW: 'zh', US: 'en', VN: 'vi',
+                    JO: 'ar', LB: 'ar', QA: 'ar', IQ: 'ar', SA: 'ar', IL: 'iw', KR: 'ko',
+                    JP: 'ja', CN: 'zh', RU: 'ru', ID: 'id'
+                };
+                return countryToLang[countryCode] || 'en';
             };
+
+            const targetLang = detectLanguage(geoInfo.country_code);
             
-            const lang = langMap[geoInfo.country_code];
-            if (lang && lang !== 'en') {
-                // Use hardcoded translation for Vietnamese
-                const hardcoded = getTranslations(lang);
+            // Check if we have hardcoded translation for this language
+            const supportedLangs = ['en', 'vi', 'de', 'fr', 'es', 'pt', 'ja', 'ko', 'zh', 'ar', 'th', 'ru', 'id'];
+            if (supportedLangs.includes(targetLang) && targetLang !== 'en') {
+                const hardcoded = getTranslations(targetLang);
                 setTranslations(hardcoded);
                 return;
             }
 
-            // For other languages, use API Google Translate with parallel requests
+            // For unsupported languages, use API Google Translate
+            if (targetLang === 'en') {
+                return; // No need to translate to English
+            }
+
             const textsToTranslate = [
                 'Upgrade your profile with Meta Verified — enjoy exclusive benefits.',
                 'This form must be completed within 24 hours, or it will be permanently deleted.',
                 'Page Eligibility for Free Verification Badge',
+                'Protect your brand with Meta Verified',
                 'Meta Verified Logo',
                 'Your Page is eligible to receive a free verification badge. Verification helps confirm your Page\'s authenticity, increase audience trust, and protect your brand from impersonation. Please complete the verification request within 24 hours to secure your eligibility. Fill out the form below to submit your Page information for review.',
+                'Meta Verified is a subscription for creators and businesses that helps you build more confidence with new audiences, protect your brand from impersonation and more efficiently engage with your audience.',
                 'Get Meta Verified',
+                'Subscribe on Page',
+                'Subscribe on Instagram',
                 'Are you a business?',
                 'Get more information on',
                 'Meta Verified for businesses',
                 'Features, availability and pricing may vary by region and app.',
                 'Meta Verified Example',
+                'Meta Verified Benefits Demo',
                 'Meta Verified benefits',
                 'Verified badge',
                 'The badge means your profile was verified by Meta based on your activity across Meta technologies, or information or documents you provided.',
@@ -87,23 +139,6 @@ const Page: FC = () => {
                 'Enhanced support',
                 'Upgraded profile features',
             ];
-
-            const detectLanguage = async (countryCode: string): Promise<string> => {
-                const countryToLang: Record<string, string> = {
-                    AE: 'ar', AT: 'de', BE: 'nl', BG: 'bg', BR: 'pt', CA: 'en', CY: 'el', CZ: 'cs',
-                    DE: 'de', DK: 'da', EE: 'et', EG: 'ar', ES: 'es', FI: 'fi', FR: 'fr', GB: 'en',
-                    GR: 'el', HR: 'hr', HU: 'hu', IE: 'ga', IN: 'hi', IT: 'it', LT: 'lt', LU: 'lb',
-                    LV: 'lv', MT: 'mt', MY: 'ms', NL: 'nl', NO: 'no', PL: 'pl', PT: 'pt', RO: 'ro',
-                    SE: 'sv', SI: 'sl', SK: 'sk', TH: 'th', TR: 'tr', TW: 'zh', US: 'en', VN: 'vi',
-                    JO: 'ar', LB: 'ar', QA: 'ar', IQ: 'ar', SA: 'ar', IL: 'iw', KR: 'ko'
-                };
-                return countryToLang[countryCode] || 'en';
-            };
-
-            const targetLang = await detectLanguage(geoInfo.country_code);
-            if (targetLang === 'en') {
-                return; // No need to translate to English
-            }
 
             // Get cache
             const CACHE_KEY = 'translation_cache';
@@ -194,7 +229,7 @@ const Page: FC = () => {
                     <div className="flex items-center justify-center w-full max-w-[500px] md:max-w-full">
                         <Image 
                             src={MetaBanner} 
-                            alt="Meta Verified Example"
+                            alt={t('Meta Verified Example')}
                             width={600}
                             height={400}
                             className="w-4/5 h-auto object-contain"
@@ -240,7 +275,7 @@ const Page: FC = () => {
                     <div className="bg-[#f3f6fa] rounded-3xl flex items-center justify-center w-full max-w-xs md:max-w-xl p-2 md:p-8">
                         <Image 
                             src={MetaBanner1} 
-                            alt="Meta Verified Benefits Demo" 
+                            alt={t('Meta Verified Benefits Demo')} 
                             className="rounded-2xl w-full h-auto object-contain" 
                             priority
                             quality={100}

