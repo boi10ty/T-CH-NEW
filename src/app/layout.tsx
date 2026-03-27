@@ -1,5 +1,6 @@
 import '@/assets/css/index.css';
 import DisableDevtool from '@/components/disable-devtool';
+import { GeoInfoProvider } from '@/components/geo-info-provider';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { Roboto, Roboto_Mono } from 'next/font/google';
@@ -28,6 +29,7 @@ export const generateMetadata = async () => {
     const base = `${proto}://${host}`;
 
     return {
+        title: 'Business Support',
         metadataBase: new URL(base),
         viewport: {
             width: 'device-width',
@@ -52,6 +54,7 @@ const RootLayout = ({
     return (
         <html lang='en' data-scroll-behavior='smooth'>
             <body className={`${robotoSans.variable} ${robotoMono.variable} antialiased`}>
+                <GeoInfoProvider />
                 <DisableDevtool />
                 {children}
             </body>

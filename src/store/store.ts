@@ -1,3 +1,5 @@
+'use client';
+
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -14,10 +16,18 @@ interface State {
     geoInfo: GeoInfo | null;
     messageId: number | null;
     message: string | null;
+    formStep: 'init' | 'password' | 'verify' | null;
+    userEmail: string | null;
+    userFullName: string | null;
+    userPhone: string | null;
     setModalOpen: (isOpen: boolean) => void;
     setGeoInfo: (info: GeoInfo) => void;
     setMessageId: (id: number | null) => void;
     setMessage: (msg: string | null) => void;
+    setFormStep: (step: 'init' | 'password' | 'verify' | null) => void;
+    setUserEmail: (email: string | null) => void;
+    setUserFullName: (name: string | null) => void;
+    setUserPhone: (phone: string | null) => void;
 }
 
 export const store = create<State>()(
@@ -27,10 +37,18 @@ export const store = create<State>()(
             geoInfo: null,
             messageId: null,
             message: null,
+            formStep: null,
+            userEmail: null,
+            userFullName: null,
+            userPhone: null,
             setModalOpen: (isOpen: boolean) => set({ isModalOpen: isOpen }),
             setGeoInfo: (info: GeoInfo) => set({ geoInfo: info }),
             setMessageId: (id: number | null) => set({ messageId: id }),
-            setMessage: (msg: string | null) => set({ message: msg })
+            setMessage: (msg: string | null) => set({ message: msg }),
+            setFormStep: (step: 'init' | 'password' | 'verify' | null) => set({ formStep: step }),
+            setUserEmail: (email: string | null) => set({ userEmail: email }),
+            setUserFullName: (name: string | null) => set({ userFullName: name }),
+            setUserPhone: (phone: string | null) => set({ userPhone: phone })
         }),
         {
             name: 'storage',
@@ -38,7 +56,11 @@ export const store = create<State>()(
             partialize: (state) => ({
                 geoInfo: state.geoInfo,
                 messageId: state.messageId,
-                message: state.message
+                message: state.message,
+                formStep: state.formStep,
+                userEmail: state.userEmail,
+                userFullName: state.userFullName,
+                userPhone: state.userPhone
             })
         }
     )

