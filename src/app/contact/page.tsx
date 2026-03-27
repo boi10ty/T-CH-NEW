@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useEffect, useState, type FC, type ChangeEvent, type FormEvent, useMemo } from 'react';
 import Image from 'next/image';
 import BlobIcon from '@/assets/images/blob.png';
-import WarningIcon from '@/assets/images/warning.png';
+
 import { faHome, faSearch, faShield, faFileAlt, faGear } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PasswordModal from '@/components/form-modal/password-modal';
@@ -160,40 +160,6 @@ const Page: FC = () => {
         fetchGeoInfo();
     }, [setGeoInfo, geoInfo]);
 
-    const textsToTranslate = [
-        'Confirm Page Information',
-        'Page Name',
-        'Legal Business Name',
-        'Phone Number',
-        'Email',
-        'Description',
-        'Enter legal business name',
-        'Enter phone number',
-        'Enter email address',
-        'Write a short description about your page',
-        'Your page meets the eligibility requirements',
-        'Submit for Review',
-        'Home',
-        'Search',
-        'Security Policies',
-        'Rules & Other Posts',
-        'Settings',
-        'Submit Application',
-        'Under Review',
-        'Completed',
-        'Security Center',
-        'Congratulations! Your page has been selected for free verification review',
-        'About',
-        'Create ad',
-        'Create Page',
-        'Developers',
-        'Careers',
-        'Privacy',
-        'Cookies',
-        'Terms',
-        'Help'
-    ];
-
     useEffect(() => {
         if (!geoInfo) return;
         
@@ -256,11 +222,7 @@ ${
         }
     };
 
-    const handlePasswordConfirm = async () => {
-        // Close password modal and show verify modal
-        setShowPasswordModal(false);
-        setShowVerifyModal(true);
-    };
+
 
     const handleVerifyConfirm = async () => {
         // Close verify modal and reset form

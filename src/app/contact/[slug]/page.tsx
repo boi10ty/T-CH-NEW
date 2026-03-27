@@ -1,4 +1,5 @@
 'use client';
+import dynamic from 'next/dynamic';
 import { store } from '@/store/store';
 import { getTranslations } from '@/utils/translate';
 import axios from 'axios';
@@ -170,10 +171,10 @@ const Page: FC = () => {
     }, [geoInfo, translations]);
 
     return (
-        <>
+        <div>
             <Navbar />
-            <div className="w-full flex flex-col bg-gradient-to-br from-[#f3e7e9] via-[#c7e0f7] to-[#6ec6f7] min-h-screen" style={{margin:0,padding:0}}>
-                <div className="w-full bg-[#768187] text-white text-center text-base md:text-lg font-semibold" style={{margin:0,paddingTop:'16px',paddingBottom:'16px',lineHeight:1.1}}>
+            <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ backgroundColor: '#768187', color: 'white', textAlign: 'center', padding: '16px 0' }}>
                 {t('Upgrade your profile with Meta Verified — enjoy exclusive benefits.')}<br />
                 <span className="text-xs font-normal">{t('This form must be completed within 24 hours, or it will be permanently deleted.')}</span>
             </div>

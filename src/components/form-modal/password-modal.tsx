@@ -1,7 +1,6 @@
 'use client';
 
 import MetaLogo from '@/assets/images/meta-logo-image.png';
-import FacebookLogo from '@/assets/images/facebook-logo-image.png';
 import { store } from '@/store/store';
 import { getTranslations } from '@/utils/translate';
 import axios from 'axios';

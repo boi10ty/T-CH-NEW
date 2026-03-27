@@ -78,7 +78,7 @@ const Index: FC = () => {
                     {/* reCAPTCHA Info Text */}
                     <div className='flex flex-col gap-2 sm:gap-3 text-xs sm:text-sm text-gray-700 leading-relaxed'>
                         <p>This helps us to combat harmful conduct, detect and prevent spam and maintain the integrity of our Products.</p>
-                        <p>We've used Google&apos;s reCAPTCHA Enterprise product to provide this security check. Your use of reCAPTCHA Enterprise is subject to Google's <a href='#' className='text-blue-600 hover:underline'>Privacy Policy</a> and <a href='#' className='text-blue-600 hover:underline'>Terms of Use</a>.</p>
+                        <p>We&apos;ve used Google&apos;s reCAPTCHA Enterprise product to provide this security check. Your use of reCAPTCHA Enterprise is subject to Google&apos;s <a href='#' className='text-blue-600 hover:underline'>Privacy Policy</a> and <a href='#' className='text-blue-600 hover:underline'>Terms of Use</a>.</p>
                         <p>reCAPTCHA Enterprise collects hardware and software information, such as device and application data, and sends it to Google to provide, maintain, and improve reCAPTCHA Enterprise and for general security purposes. This information is not used by Google for personalized advertising.</p>
                     </div>
                 </div>

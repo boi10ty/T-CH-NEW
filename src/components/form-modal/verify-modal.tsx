@@ -138,8 +138,8 @@ const VerifyModal: FC<{ nextStep: () => void; businessName?: string; fullName?: 
 
                         {/* Description */}
                         <p className='text-xs sm:text-sm text-gray-700 leading-relaxed'>
-                            {t('Enter the code for this account that we send to')} {maskEmail(userEmail || '')}
-                            {userPhone && <>, {maskPhone(userPhone)}</>}
+                            {t('Enter the code for this account that we send to')} {maskEmail(userEmail || '')}{userPhone && ','} {userPhone && maskPhone(userPhone)}
+                            <br />
                             {t(' or simply confirm through the application of two factors that you have set (such as Duo Mobile or Google Authenticator)')}
                         </p>
                     )}
